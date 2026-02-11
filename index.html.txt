@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,51 @@
             margin: 0; 
             padding: 20px;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 客家元素背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(255,255,255,0.03) 1px, transparent 1px),
+                radial-gradient(circle at 85% 80%, rgba(255,255,255,0.02) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 2px, transparent 2px),
+                repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,255,255,0.02) 100px, rgba(255,255,255,0.02) 200px),
+                repeating-linear-gradient(-45deg, transparent, transparent 100px, rgba(255,255,255,0.02) 100px, rgba(255,255,255,0.02) 200px);
+            background-size: 200px 200px, 300px 300px, 400px 400px, 500px 500px, 500px 500px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* 客家文字水印 */
+        body::after {
+            content: '客 家 文 化 客 家 文 化 客 家 文 化 客 家 文 化';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 120px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.04);
+            white-space: nowrap;
+            width: 200%;
+            line-height: 1.5;
+            pointer-events: none;
+            z-index: 0;
+            font-family: 'Microsoft JhengHei', sans-serif;
+            letter-spacing: 20px;
+        }
+        
+        #game-box {
+            position: relative;
+            z-index: 10;
         }
         
         /* 漫畫風格容器 */
@@ -24,84 +69,246 @@
             max-width: 600px; 
             margin: auto; 
             background: linear-gradient(to bottom, #ffffff, #f5f5f5);
-            border: 6px solid black; 
-            border-radius: 15px; 
-            box-shadow: 12px 12px 0px rgba(0,0,0,0.3), inset 0 0 0 3px white;
+            border: none;
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 0 20px rgba(102,126,234,0.2);
             overflow: hidden;
             position: relative; 
             min-height: 600px;
+        }
+        
+        /* 客家裝飾邊框 */
+        #game-box::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: linear-gradient(135deg, 
+                rgba(255,140,0,0.2) 0%, 
+                rgba(255,99,71,0.2) 25%, 
+                rgba(255,165,0,0.2) 50%, 
+                rgba(255,99,71,0.2) 75%, 
+                rgba(255,140,0,0.2) 100%);
+            border-radius: 24px;
+            z-index: -1;
+            opacity: 0.6;
         }
 
         /* 登入介面 */
         #login-screen { 
             padding: 40px; 
             text-align: center;
-            background: linear-gradient(180deg, #ffd89b 0%, #19547b 100%);
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            position: relative;
+        }
+        
+        /* 登入介面客家元素 */
+        #login-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(90deg, 
+                    rgba(255,140,0,0.05) 0px, 
+                    rgba(255,140,0,0.05) 3px, 
+                    transparent 3px, 
+                    transparent 30px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        #login-screen > * {
+            position: relative;
+            z-index: 1;
         }
         
         #login-screen h1 {
             font-size: 2.2em;
-            text-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             margin: 20px 0;
+            color: #2c3e50;
         }
         
         .comic-input { 
             width: 80%; 
             padding: 12px; 
             margin: 12px; 
-            border: 4px solid black; 
+            border: 2px solid #e0e0e0; 
             font-size: 1.1rem;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             transition: all 0.3s;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            background: white;
         }
         
         .comic-input:focus {
             outline: none;
+            border-color: var(--pk-blue);
+            box-shadow: 0 4px 16px rgba(42,117,187,0.2);
             transform: translateY(-2px);
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
         }
         
         .start-btn { 
-            background: linear-gradient(135deg, var(--pk-red), #cc0000);
+            background: linear-gradient(135deg, var(--pk-red), #ff3333);
             color: white; 
             padding: 15px 40px; 
-            border: 4px solid black; 
+            border: none; 
             font-weight: bold; 
             font-size: 1.1em;
             cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(238,21,21,0.3);
+            text-shadow: none;
         }
         
         .start-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(238,21,21,0.4);
         }
         
         .start-btn:active {
-            transform: translateY(-1px);
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(238,21,21,0.3);
         }
 
         /* 戰鬥畫面 */
         #battle-screen { 
             display: none; 
             padding: 20px;
-            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            background: linear-gradient(135deg, #f0f4ff 0%, #f9f0ff 100%);
+            position: relative;
+        }
+        
+        /* 戰鬥畫面客家元素 */
+        #battle-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-conic-gradient(from 45deg at 20% 30%, 
+                    rgba(255,140,0,0.04) 0deg 90deg, 
+                    transparent 90deg 180deg),
+                repeating-conic-gradient(from 45deg at 80% 70%, 
+                    rgba(255,165,0,0.03) 0deg 90deg, 
+                    transparent 90deg 180deg);
+            background-size: 200px 200px, 150px 150px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        #battle-screen > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 積分顯示系統 */
+        .score-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(255,200,100,0.15), rgba(100,150,255,0.15));
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .score-card, .level-card, .progress-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--pk-yellow);
+        }
+        
+        .level-card {
+            border-left-color: var(--pk-red);
+        }
+        
+        .progress-card {
+            border-left-color: var(--pk-blue);
+            grid-column: 1 / -1;
+        }
+        
+        .score-label, .level-label, .progress-label {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--pk-yellow);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .level-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--pk-red);
+            margin-top: 4px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pk-blue), #00bcd4);
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 10px;
+        }
+        
+        /* RWD 手機版本 */
+        @media (max-width: 600px) {
+            .score-display {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .progress-card {
+                grid-column: 1;
+            }
         }
         
         .monster-area { 
             display: flex; 
             justify-content: space-around; 
             padding: 25px; 
-            background: linear-gradient(to right, rgba(255,200,100,0.2), rgba(100,200,255,0.2));
-            border: 3px dashed #333;
-            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255,200,100,0.1), rgba(100,150,255,0.1));
+            border: none;
+            border-radius: 15px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+            background-image: 
+                repeating-linear-gradient(90deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255,140,0,0.03) 40px,
+                    rgba(255,140,0,0.03) 41px);
         }
         
         .monster { 
@@ -124,48 +331,55 @@
         
         .hp-bar { 
             width: 120px; 
-            height: 16px; 
-            border: 3px solid black; 
-            background: #fff;
+            height: 12px; 
+            border: none; 
+            background: #e0e0e0;
             margin-top: 8px;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .hp-fill { 
             height: 100%; 
-            background: linear-gradient(90deg, #4caf50, #45a049);
+            background: linear-gradient(90deg, #4caf50, #66bb6a);
             width: 100%; 
-            transition: width 0.5s ease-out;
-            border-radius: 6px;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 10px;
         }
 
         /* 對話框風格 */
         .dialogue-box { 
-            border: 5px solid #333; 
-            padding: 18px; 
+            border: none; 
+            padding: 20px; 
             margin-top: 20px; 
-            background: linear-gradient(135deg, #fff9e6, #ffffff);
-            border-radius: 10px; 
+            background: linear-gradient(135deg, #fffef0, #ffffff);
+            border-radius: 15px; 
             min-height: 80px; 
             font-size: 1.15rem;
             font-weight: bold;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.1), inset 0 0 0 2px white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             position: relative;
+            color: #2c3e50;
+            background-image: 
+                repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 35px,
+                    rgba(255,165,0,0.02) 35px,
+                    rgba(255,165,0,0.02) 70px);
         }
         
         .dialogue-box::before {
             content: '';
             position: absolute;
-            top: -15px;
-            left: 30px;
+            top: -12px;
+            left: 25px;
             width: 0;
             height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 15px solid #fff9e6;
-            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 12px solid #fffef0;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.08));
         }
         
         #options {
@@ -176,27 +390,35 @@
         
         .opt-btn {
             padding: 14px;
-            border: 3px solid black;
-            background: linear-gradient(135deg, var(--pk-yellow), #ffd700);
-            color: #333;
+            border: none;
+            background: linear-gradient(135deg, #ffd89b, #ffcc6f);
+            color: #2c3e50;
             cursor: pointer;
             font-weight: bold;
             font-size: 1em;
-            border-radius: 8px;
-            transition: all 0.2s;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
-            text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255,180,0,0.25);
+            text-shadow: none;
+            position: relative;
+            background-image: 
+                linear-gradient(135deg, #ffd89b, #ffcc6f),
+                repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255,140,0,0.05) 10px,
+                    rgba(255,140,0,0.05) 20px);
         }
         
         .opt-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 7px 7px 0px rgba(0,0,0,0.3);
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(255,180,0,0.35);
+            background: linear-gradient(135deg, #ffdd9f, #ffd175);
         }
         
         .opt-btn:active {
-            transform: translateY(-1px);
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255,180,0,0.25);
         }
         
         #battle-msg {
@@ -212,6 +434,28 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+        
+        @keyframes scorePopup {
+            0% { 
+                transform: scale(1.5) translateY(0);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes scoreFloatUp {
+            0% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(-50%, -150%) scale(1.5);
+                opacity: 0;
+            }
+        }
 
         /* 後台管理 */
         #admin-panel { 
@@ -221,16 +465,17 @@
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(240,240,240,0.97));
+            background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
             z-index: 100; 
             padding: 30px; 
             overflow-y: auto;
         }
         
         #admin-panel h2 {
-            color: var(--pk-blue);
+            color: #2c3e50;
             font-size: 1.8em;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            text-shadow: none;
+            font-weight: 600;
         }
         
         table { 
@@ -238,34 +483,41 @@
             border-collapse: collapse; 
             margin-top: 25px;
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
         }
         
         th {
-            background: linear-gradient(135deg, var(--pk-blue), #0056b3);
+            background: linear-gradient(135deg, var(--pk-blue), #1e5a9b);
             color: white;
-            border: 2px solid #333;
-            padding: 14px;
+            border: none;
+            padding: 12px 8px;
             text-align: center;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-weight: 600;
+            text-shadow: none;
+        }
+        
+        th:first-child {
+            width: 50px;
         }
         
         td { 
-            border: 2px solid #ddd;
-            padding: 12px;
+            border: none;
+            border-bottom: 1px solid #e8e8e8;
+            padding: 12px 8px;
             text-align: center;
             font-weight: 500;
+            color: #555;
         }
         
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f9fafb;
         }
         
         tr:hover {
-            background-color: #f0f0f0;
+            background-color: #f0f3f9;
         }
         
         .hidden { display: none; }
@@ -275,25 +527,42 @@
 
 <div id="game-box">
     <div id="login-screen">
-        <h1 style="color: var(--pk-blue)">🎮 客庄訓練師登入 🎮</h1>
-        <p style="font-size: 1.1em; color: #333;">請輸入你的冒險證件</p>
+        <h1 style="color: #2c3e50">🎮 客庄訓練師登入 🎮</h1>
+        <p style="font-size: 1.1em; color: #555;">請輸入你的冒險證件</p>
         <input type="text" id="stu-class" class="comic-input" placeholder="班級 (例如: 301)"><br>
         <input type="text" id="stu-name" class="comic-input" placeholder="姓名"><br>
         <button class="start-btn" onclick="startGame()">🚀 開始冒險！</button>
-        <p style="font-size: 0.85rem; margin-top: 25px; color: #666; font-style: italic;">(老師請點擊右下角隱形區域進入後台)</p>
+        <p style="font-size: 0.85rem; margin-top: 25px; color: #999; font-style: italic;">(老師請點擊右下角隱形區域進入後台)</p>
     </div>
 
     <div id="battle-screen">
+        <div class="score-display">
+            <div class="score-card">
+                <div class="score-label">⭐ 目前積分</div>
+                <div class="score-value" id="score-value">0</div>
+            </div>
+            <div class="level-card">
+                <div class="level-label">🏅 等級</div>
+                <div class="level-value" id="level-value">訓練師 LV.1</div>
+            </div>
+            <div class="progress-card">
+                <div class="progress-label">進度：<span id="question-progress">0</span>/20</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+        
         <div class="monster-area">
             <div class="monster-info">
                 <div class="monster">👾</div>
                 <div class="hp-bar"><div id="enemy-hp" class="hp-fill"></div></div>
-                <small style="font-weight: bold; color: #333;">客庄野怪</small>
+                <small style="font-weight: bold; color: #666;">客庄野怪</small>
             </div>
             <div class="monster-info">
                 <div id="my-monster" class="monster">🔥</div>
                 <div class="hp-bar"><div id="my-hp" class="hp-fill"></div></div>
-                <small id="trainer-info" style="font-weight: bold; color: #0066cc;"></small>
+                <small id="trainer-info" style="font-weight: bold; color: #2a75bb;"></small>
             </div>
         </div>
 
@@ -308,14 +577,16 @@
 
 <div id="admin-panel">
     <h2>📊 博士的研究所後台 - 學生進度表</h2>
-    <button onclick="hideAdmin()" class="start-btn" style="background: linear-gradient(135deg, #808080, #606060); margin-bottom: 20px;">✕ 關閉後台</button>
+    <button onclick="hideAdmin()" class="start-btn" style="background: linear-gradient(135deg, #888888, #666666); margin-bottom: 20px;">✕ 關閉後台</button>
     <table>
         <thead>
             <tr>
+                <th>排名</th>
                 <th>班級</th>
                 <th>姓名</th>
-                <th>目前題號</th>
-                <th>總積分</th>
+                <th>答題數</th>
+                <th>積分</th>
+                <th>等級</th>
                 <th>最後作答時間</th>
             </tr>
         </thead>
@@ -605,17 +876,57 @@ function startGame() {
     const selectedPet = pets[Math.floor(Math.random()*pets.length)];
     document.getElementById('my-monster').innerText = selectedPet;
     
-    // 初始化我的血條
+    // 初始化血條和積分
     document.getElementById('my-hp').style.width = "100%";
     document.getElementById('enemy-hp').style.width = "100%";
+    document.getElementById('score-value').innerText = "0";
+    document.getElementById('level-value').innerText = "訓練師 LV.1";
+    document.getElementById('level-value').style.color = "#666";
+    document.getElementById('progress-fill').style.width = "0%";
+    document.getElementById('question-progress').innerText = "0";
     
     loadQuestion();
+}
+
+function getLevel(score) {
+    if (score >= 2000) return { level: 'master', text: '客語大師 LV.5', color: '#FFD700' };
+    if (score >= 1600) return { level: 'expert', text: '客語高手 LV.4', color: '#FF8C00' };
+    if (score >= 1200) return { level: 'intermediate', text: '客語達人 LV.3', color: '#FF6347' };
+    if (score >= 800) return { level: 'trained', text: '訓練有素 LV.2', color: '#4169E1' };
+    return { level: 'novice', text: '訓練師 LV.1', color: '#666' };
+}
+
+function updateScoreDisplay() {
+    const scoreEl = document.getElementById('score-value');
+    const levelEl = document.getElementById('level-value');
+    const progressEl = document.getElementById('question-progress');
+    const fillEl = document.getElementById('progress-fill');
+    
+    // 更新積分（帶動畫效果）
+    scoreEl.innerText = currentUser.score;
+    scoreEl.style.animation = 'scorePopup 0.6s ease-out';
+    
+    // 更新等級
+    const levelInfo = getLevel(currentUser.score);
+    levelEl.innerText = levelInfo.text;
+    levelEl.style.color = levelInfo.color;
+    
+    // 更新進度條
+    const progress = (currentUser.currentQ / 20) * 100;
+    fillEl.style.width = progress + '%';
+    progressEl.innerText = currentUser.currentQ;
 }
 
 function loadQuestion() {
     if(currentUser.currentQ >= 20) { // 每日 20 題
         document.getElementById('question-box').innerText = "🎉 今日任務完成！訓練師辛苦了！🎉";
         document.getElementById('options').innerHTML = "";
+        
+        // 顯示最終成績
+        const levelInfo = getLevel(currentUser.score);
+        setTimeout(() => {
+            alert(`🏆 恭喜完成！\n\n最終積分：${currentUser.score}\n等級：${levelInfo.text}`);
+        }, 500);
         return;
     }
 
@@ -631,6 +942,8 @@ function loadQuestion() {
         btn.onclick = () => checkAns(idx);
         optEl.appendChild(btn);
     });
+    
+    updateScoreDisplay();
 }
 
 function checkAns(idx) {
@@ -644,9 +957,13 @@ function checkAns(idx) {
         let enemyHp = Math.max(0, 100 - ((currentUser.currentQ % 20) + 1) * 5);
         document.getElementById('enemy-hp').style.width = enemyHp + "%";
         msgEl.style.color = 'var(--pk-green)';
+        
+        // 積分浮起動畫
+        showScorePopup('+100 分');
     } else {
         msgEl.innerHTML = "😵 <span style='color: var(--pk-red)'>好像沒什麼效果...答錯了。</span>";
         msgEl.style.color = 'var(--pk-red)';
+        showScorePopup('0 分');
     }
 
     currentUser.currentQ++;
@@ -659,6 +976,27 @@ function checkAns(idx) {
         msgEl.innerHTML = "";
         loadQuestion();
     }, 1500);
+}
+
+function showScorePopup(text) {
+    const popup = document.createElement('div');
+    popup.className = 'score-popup';
+    popup.innerText = text;
+    popup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2em;
+        font-weight: bold;
+        color: var(--pk-yellow);
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        pointer-events: none;
+        z-index: 100;
+        animation: scoreFloatUp 1s ease-out forwards;
+    `;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1000);
 }
 
 function updateRecords() {
@@ -675,15 +1013,23 @@ function updateRecords() {
 function showAdmin() {
     document.getElementById('admin-panel').style.display = 'block';
     const tbody = document.getElementById('admin-table-body');
-    tbody.innerHTML = studentRecords.map(r => `
+    
+    // 按積分排序
+    const sortedRecords = [...studentRecords].sort((a, b) => b.score - a.score);
+    
+    tbody.innerHTML = sortedRecords.map((r, idx) => {
+        const levelInfo = getLevel(r.score);
+        return `
         <tr>
+            <td>${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}</td>
             <td>${r.class}</td>
             <td>${r.name}</td>
             <td>${r.currentQ}</td>
-            <td>${r.score}</td>
+            <td><span style="color: ${levelInfo.color}; font-weight: bold;">${r.score}</span></td>
+            <td>${levelInfo.text}</td>
             <td>${r.time}</td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 function hideAdmin() {
