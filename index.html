@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客語地圖大闖關 - 🌸</title>
+    <title>客語地圖大闖關 - 🌸 精緻貼合版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #ffb7c5;
             --correct: #4caf50;
             --wrong: #f44336;
-            --bg-overlay: rgba(255, 255, 255, 0.92);
+            --bg-overlay: rgba(255, 255, 255, 0.94);
         }
 
         body, html {
@@ -22,83 +22,93 @@
             overflow: hidden;
         }
 
-        /* 闖關地圖區域 */
+        /* 闖關地圖 */
         .map-progress-container {
-            width: 90%; max-width: 1000px;
+            width: 90%; max-width: 900px;
             background: rgba(255, 255, 255, 0.7);
-            border-radius: 20px; padding: 15px; margin-bottom: 20px;
+            border-radius: 15px; padding: 10px; margin-bottom: 15px;
             display: flex; align-items: center; justify-content: space-between;
-            position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .map-line {
             position: absolute; top: 50%; left: 5%; right: 5%;
-            height: 6px; background: #ddd; z-index: 1; transform: translateY(-50%);
+            height: 4px; background: #ccc; z-index: 1; transform: translateY(-50%);
         }
 
         .city-node {
-            width: 50px; height: 50px; background: white; border: 4px solid var(--primary);
+            width: 45px; height: 45px; background: white; border: 3px solid var(--primary);
             border-radius: 50%; z-index: 2; display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; color: #d63384; font-weight: bold; transition: 0.3s;
+            font-size: 0.9rem; color: #d63384; font-weight: bold; transition: 0.3s;
         }
 
-        .city-node.active { background: #d63384; color: white; transform: scale(1.3); box-shadow: 0 0 15px var(--primary); }
+        .city-node.active { background: #d63384; color: white; transform: scale(1.2); }
 
-        /* 題目主容器 */
+        /* 主容器 */
         .quiz-container {
-            width: 90%; max-width: 1100px;
-            background: var(--bg-overlay); backdrop-filter: blur(12px);
-            padding: 40px; border-radius: 40px;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.25);
-            border: 5px solid white; text-align: center;
+            width: 90%; max-width: 1000px;
+            background: var(--bg-overlay); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 4px solid white; text-align: center;
         }
 
-        h1 { color: #d63384; font-size: 2.5rem; margin: 0 0 15px 0; }
+        h1 { color: #d63384; font-size: 2.2rem; margin: 0 0 5px 0; }
+        .mode-tag { color: #888; font-size: 1.1rem; margin-bottom: 15px; }
 
+        /* 題目框：貼合文字 */
         #question-text {
-            font-size: 3.2rem; /* 極大字體 */
-            min-height: 200px; margin-bottom: 40px;
-            color: #111; line-height: 1.4; font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
+            display: inline-block; /* 讓框寬度隨字變動 */
+            font-size: 2.8rem; 
+            margin-bottom: 30px;
+            padding: 10px 25px; /* 緊縮內距 */
+            background: rgba(214, 51, 132, 0.05);
+            border-radius: 20px;
+            color: #111; line-height: 1.3; font-weight: 700;
+            border: 2px dashed var(--primary); /* 增加一個輕微的題目框 */
         }
 
         .options-grid {
-            display: grid; grid-template-columns: 1fr; gap: 35px; /* 拉開間距防止黏連 */
+            display: grid; grid-template-columns: 1fr; gap: 20px;
         }
 
-        @media (min-width: 850px) {
-            .options-grid { grid-template-columns: 1fr 1fr; gap: 45px; }
+        @media (min-width: 800px) {
+            .options-grid { grid-template-columns: 1fr 1fr; gap: 25px; }
         }
 
+        /* 選項按鈕：貼合文字 */
         .option-btn {
-            background: white; border: 6px solid var(--primary);
-            padding: 40px 25px; border-radius: 35px;
-            font-size: 2.4rem; /* 選項字體極大 */
+            background: white; border: 4px solid var(--primary);
+            padding: 15px 20px; /* 大幅縮小 Padding 使其貼合 */
+            border-radius: 20px;
+            font-size: 2rem; /* 字體依然很大 */
             font-weight: 700; cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #333; box-shadow: 0 10px 0px var(--primary);
+            transition: all 0.2s ease;
+            color: #333; box-shadow: 0 6px 0px var(--primary);
             display: flex; justify-content: center; align-items: center;
+            min-height: auto; /* 取消最小高度限制 */
         }
 
-        .option-btn:hover { transform: translateY(-8px); box-shadow: 0 15px 25px rgba(214,51,132,0.2); }
+        .option-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 15px rgba(214,51,132,0.15); }
 
-        .correct { background-color: var(--correct) !important; color: white !important; border-color: #2e7d32 !important; box-shadow: 0 10px 0px #2e7d32 !important; }
-        .wrong { background-color: var(--wrong) !important; color: white !important; border-color: #b71c1c !important; box-shadow: 0 10px 0px #b71c1c !important; }
-        
+        .correct { background-color: var(--correct) !important; color: white !important; border-color: #2e7d32 !important; box-shadow: 0 6px 0px #2e7d32 !important; }
+        .wrong { background-color: var(--wrong) !important; color: white !important; border-color: #b71c1c !important; box-shadow: 0 6px 0px #b71c1c !important; }
+        .disabled { pointer-events: none; }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-20px); }
-            40%, 80% { transform: translateX(20px); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
         }
         .shake { animation: shake 0.4s ease-in-out; }
 
         #result-screen { display: none; }
-        .score-val { font-size: 8rem; color: #d63384; font-weight: bold; }
-    </style>
+        .score-val { font-size: 7rem; color: #d63384; font-weight: bold; }
+    </score-val>
 </head>
 <body>
 
-<div class="map-progress-container" id="map-bar">
+<div class="map-progress-container">
     <div class="map-line"></div>
     <div class="city-node active" data-step="0">屏東</div>
     <div class="city-node" data-step="3">高雄</div>
@@ -110,57 +120,57 @@
 
 <div class="quiz-container" id="main-box">
     <div id="game-screen">
-        <h1 id="current-location">📍 當前位置：屏東站</h1>
-        <div id="question-text">準備出發...</div>
+        <h1>🌸 客語地圖大闖關 🌸</h1>
+        <div class="mode-tag" id="mode-info">...</div>
+        <div><div id="question-text">載入中...</div></div>
         <div id="options" class="options-grid"></div>
     </div>
 
     <div id="result-screen">
-        <h2>🎉 恭喜完成全台大闖關！</h2>
+        <h2>🎉 闖關成功！</h2>
         <div class="score-val" id="score-text">0</div>
-        <p style="font-size:2rem;">做得真慶！你是一流的客語探險家！</p>
-        <button onclick="location.reload()" style="font-size:2.5rem; padding:20px 60px; border-radius:100px; background:#d63384; color:white; border:none; cursor:pointer; margin-top:30px;">重新挑戰</button>
+        <p id="review-info" style="font-size:1.6rem;"></p>
+        <button onclick="location.reload()" style="font-size:2rem; padding:15px 50px; border-radius:50px; background:#d63384; color:white; border:none; cursor:pointer;">繼續挑戰</button>
     </div>
 </div>
 
 <script>
-    let questions = [];
+    let allQuestions = [];
+    let currentPool = [];
     let currentIdx = 0;
     let score = 0;
     let isLocked = false;
-    const cities = ["屏東", "屏東", "屏東", "高雄", "高雄", "高雄", "嘉義", "嘉義", "嘉義", "台中", "台中", "台中", "新竹", "新竹", "新竹", "台北"];
+    const cities = ["屏東", "高雄", "嘉義", "台中", "新竹", "台北"];
 
     async function start() {
         try {
             const resp = await fetch('questions.json');
-            const data = await resp.json();
-            // 隨機抽 15 題，模擬 15 個里程點
-            questions = data.sort(() => Math.random() - 0.5).slice(0, 15);
+            allQuestions = await resp.json();
+            allQuestions.forEach((q, index) => q.id = index);
+            let wrongIds = JSON.parse(localStorage.getItem('hakka_wrong_v2')) || [];
+            let selected = [];
+            let wrongQuestions = allQuestions.filter(q => wrongIds.includes(q.id));
+            selected = wrongQuestions.sort(() => Math.random() - 0.5).slice(0, 15);
+            if (selected.length < 15) {
+                let remaining = 15 - selected.length;
+                let otherQuestions = allQuestions.filter(q => !wrongIds.includes(q.id));
+                selected = selected.concat(otherQuestions.sort(() => Math.random() - 0.5).slice(0, remaining));
+            }
+            currentPool = selected;
+            document.getElementById('mode-info').innerText = wrongIds.length > 0 ? `💪 正在複習 ${Math.min(wrongIds.length, 15)} 題錯題` : "🆕 全新隨機挑戰";
             render();
-        } catch (e) {
-            document.getElementById('question-text').innerText = "❌ 無法讀取題庫";
-        }
+        } catch (e) { document.getElementById('question-text').innerText = "❌ 讀取失敗"; }
     }
 
     function render() {
-        if (currentIdx >= questions.length) {
-            showEnd();
-            return;
-        }
-
+        if (currentIdx >= currentPool.length) { showEnd(); return; }
         isLocked = false;
-        const q = questions[currentIdx];
+        const q = currentPool[currentIdx];
         document.getElementById('main-box').classList.remove('shake');
-        
-        // 更新地圖節點視覺
         updateMap();
-
         document.getElementById('question-text').innerText = q.q;
-        document.getElementById('current-location').innerText = `📍 當前位置：${cities[currentIdx]}站 (${currentIdx + 1}/15)`;
-
         const optDiv = document.getElementById('options');
         optDiv.innerHTML = "";
-
         q.a.forEach((txt, i) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
@@ -172,42 +182,36 @@
 
     function updateMap() {
         const nodes = document.querySelectorAll('.city-node');
-        nodes.forEach(node => {
-            if (parseInt(node.dataset.step) <= currentIdx) {
-                node.classList.add('active');
-            }
-        });
+        nodes.forEach(node => { if (parseInt(node.dataset.step) <= currentIdx) node.classList.add('active'); });
     }
 
     function check(picked, btn) {
         if (isLocked) return;
         isLocked = true;
-
-        const correct = questions[currentIdx].ans;
+        const q = currentPool[currentIdx];
+        const correct = q.ans;
         const allBtns = document.querySelectorAll('.option-btn');
-
+        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrong_v2')) || [];
+        allBtns.forEach(b => b.classList.add('disabled'));
         if (picked === correct) {
             score++;
             btn.classList.add('correct');
+            wrongIds = wrongIds.filter(id => id !== q.id);
         } else {
             btn.classList.add('wrong');
             allBtns[correct].classList.add('correct');
             document.getElementById('main-box').classList.add('shake');
+            if (!wrongIds.includes(q.id)) wrongIds.push(q.id);
         }
-
-        setTimeout(() => {
-            currentIdx++;
-            render();
-        }, 1400);
+        localStorage.setItem('hakka_wrong_v2', JSON.stringify(wrongIds));
+        setTimeout(() => { currentIdx++; render(); }, 1200);
     }
 
     function showEnd() {
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('score-text').innerText = `${score} / 15`;
-        document.querySelector('.city-node[data-step="15"]').classList.add('active');
     }
-
     start();
 </script>
 
