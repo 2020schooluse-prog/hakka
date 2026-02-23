@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客語地圖大闖關 - 修正版</title>
+    <title>客語地圖大闖關 - 🌸 題目內嵌版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -53,14 +53,14 @@
             border: 4px solid white; text-align: center;
         }
 
-        h1 { color: #d63384; font-size: 2.2rem; margin: 0 0 5px 0; }
-        .mode-tag { color: #888; font-size: 1.1rem; margin-bottom: 15px; }
+        h1 { color: #d63384; font-size: 2.2rem; margin: 0; }
+        .mode-tag { color: #888; font-size: 1.1rem; margin-bottom: 15px; font-weight: bold; }
 
         /* 題目框：貼合文字 */
+        #question-text-wrap { margin-bottom: 30px; }
         #question-text {
             display: inline-block;
-            font-size: 2.5rem; 
-            margin-bottom: 25px;
+            font-size: 3rem; 
             padding: 10px 25px;
             background: rgba(214, 51, 132, 0.05);
             border-radius: 20px;
@@ -81,7 +81,7 @@
             background: white; border: 4px solid var(--primary);
             padding: 15px 20px;
             border-radius: 20px;
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 700; cursor: pointer;
             transition: all 0.2s ease;
             color: #333; box-shadow: 0 6px 0px var(--primary);
@@ -94,7 +94,14 @@
         .disabled { pointer-events: none; }
 
         #result-screen { display: none; }
-        .score-val { font-size: 5rem; color: #d63384; font-weight: bold; }
+        .score-val { font-size: 6rem; color: #d63384; font-weight: bold; margin: 10px 0; }
+        .status-msg { font-size: 1.8rem; color: #444; margin-bottom: 20px; }
+        
+        .next-tour-btn {
+            font-size: 2.2rem; padding: 20px 60px; border-radius: 100px; 
+            background: #d63384; color: white; border: none; cursor: pointer;
+            box-shadow: 0 8px 15px rgba(214, 51, 132, 0.3); transition: 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -112,26 +119,42 @@
 <div class="quiz-container" id="main-box">
     <div id="game-screen">
         <h1>🌸 客語地圖大闖關 🌸</h1>
-        <div class="mode-tag" id="mode-info">載入中...</div>
-        <div><div id="question-text">載入中...</div></div>
+        <div class="mode-tag" id="mode-info">正在準備行囊...</div>
+        <div id="question-text-wrap"><div id="question-text">載入中...</div></div>
         <div id="options" class="options-grid"></div>
     </div>
 
     <div id="result-screen">
-        <h2>🎉 闖關成功！</h2>
+        <h2>🎉 到達台北站！</h2>
         <div class="score-val" id="score-text">0</div>
-        <p id="status-msg" style="font-size:1.4rem;"></p>
-        <button onclick="location.reload()" style="font-size:1.8rem; padding:12px 40px; border-radius:50px; background:#d63384; color:white; border:none; cursor:pointer;">繼續挑戰</button>
+        <div class="status-msg" id="status-msg"></div>
+        <button class="next-tour-btn" onclick="location.reload()">繼續下一輪挑戰</button>
     </div>
 </div>
 
 <script>
-    // 直接將題庫嵌入，避免外部 JSON 載入失敗的問題
-    const allQuestions = [
+    /* 直接將題庫放在這裡，100% 跑得出來 */
+    const rawData = [
         {q: "壞蹄咧！糖仔分老弟食_____咧！", a: ["淨淨", "淨俐", "清清"], ans: 0},
         {q: "該兩兄弟當像＿＿＿，逐擺見面就相吵仔。", a: ["生份人", "自家人", "冤仇人"], ans: 2},
-        {q: "泡牛乳分嬰兒仔食，愛用_____來泡，正較衛生。", a: ["冷水", "滾水", "涼水"], ans: 1}
-        // ... 此處可加入更多題目
+        {q: "泡牛乳分嬰兒仔食，愛用_____來泡，正較衛生。", a: ["冷水", "滾水", "涼水"], ans: 1},
+        {q: "天時＿＿＿，大家愛多啉水，正不會中暑。", a: ["冷冷", "燒暖", "燥熱"], ans: 2},
+        {q: "阿公逐日朝晨都去公園＿＿＿。", a: ["打球", "散步", "跳舞"], ans: 1},
+        {q: "這碗湯當＿＿＿，愛慢慢仔啉。", a: ["冷", "燒", "甜"], ans: 1},
+        {q: "這本書當＿＿＿，我看過三擺咧。", a: ["好讀", "好笑", "好客"], ans: 1},
+        {q: "落雨天，出門愛記得帶＿＿＿。", a: ["雨遮", "雨帽", "雨鞋"], ans: 0},
+        {q: "這件衫當＿＿＿，適著你著。", a: ["好看", "長長", "短短"], ans: 0},
+        {q: "大家愛＿＿＿資源回收，保護地球。", a: ["做好", "不做", "亂做"], ans: 0},
+        {q: "這盆花當＿＿＿，味道當香。", a: ["好看", "大朵", "靓靓"], ans: 2},
+        {q: "這粒西瓜當＿＿＿，水分當多。", a: ["甜", "鹹", "酸"], ans: 0},
+        {q: "阿婆煮的菜當＿＿＿，大家食到當歡喜。", a: ["好食", "難食", "苦苦"], ans: 0},
+        {q: "路邊的樹木當＿＿＿，可以遮蔭。", a: ["高大", "矮小", "枯燥"], ans: 0},
+        {q: "這台車當＿＿＿，可以坐當多人。", a: ["大台", "細台", "舊舊"], ans: 0},
+        {q: "今天天時當＿＿＿，適合出去搞。", a: ["好", "壞", "陰"], ans: 0},
+        {q: "這件衫當＿＿＿，著起來當舒服。", a: ["燒暖", "冷冷", "鬆鬆"], ans: 0},
+        {q: "阿公講的話當有＿＿＿，大家愛聽。", a: ["道理", "趣向", "大聲"], ans: 0},
+        {q: "這支筆當＿＿＿，好寫到當。", a: ["好", "長", "短"], ans: 0},
+        {q: "這間屋子當＿＿＿，打掃到當乾淨。", a: ["淨俐", "亂糟", "舊舊"], ans: 0}
     ];
 
     let currentPool = [];
@@ -139,29 +162,32 @@
     let score = 0;
     let isLocked = false;
 
-    function initGame() {
-        // 為題目增加 ID
-        allQuestions.forEach((q, i) => q.id = i);
+    function start() {
+        // 為題目編號
+        rawData.forEach((q, index) => q.id = index);
+
+        // 讀取錯題庫
+        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrongs_fixed')) || [];
         
-        // 取得錯題
-        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrongs')) || [];
-        let selected = allQuestions.filter(q => wrongIds.includes(q.id)).sort(() => 0.5 - Math.random()).slice(0, 15);
+        let selected = [];
+        let wrongQuestions = rawData.filter(q => wrongIds.includes(q.id));
+        selected = wrongQuestions.sort(() => Math.random() - 0.5).slice(0, 15);
         
         if (selected.length < 15) {
-            let others = allQuestions.filter(q => !wrongIds.includes(q.id)).sort(() => 0.5 - Math.random());
-            selected = selected.concat(others.slice(0, 15 - selected.length));
+            let otherQuestions = rawData.filter(q => !wrongIds.includes(q.id));
+            let needed = 15 - selected.length;
+            selected = selected.concat(otherQuestions.sort(() => Math.random() - 0.5).slice(0, needed));
         }
         
         currentPool = selected;
-        document.getElementById('mode-info').innerText = wrongIds.length > 0 ? `💪 優先練習 ${Math.min(wrongIds.length, 15)} 題錯題` : "🆕 全新隨機挑戰";
+        document.getElementById('mode-info').innerText = 
+            wrongIds.length > 0 ? `🚀 複習 ${Math.min(wrongIds.length, 15)} 題錯題` : "🆕 全新挑戰開始！";
+        
         render();
     }
 
     function render() {
-        if (currentIdx >= currentPool.length) {
-            showEnd();
-            return;
-        }
+        if (currentIdx >= currentPool.length) { showEnd(); return; }
         isLocked = false;
         const q = currentPool[currentIdx];
         updateMap();
@@ -180,6 +206,7 @@
     function updateMap() {
         document.querySelectorAll('.city-node').forEach(node => {
             if (parseInt(node.dataset.step) <= currentIdx) node.classList.add('active');
+            else node.classList.remove('active');
         });
     }
 
@@ -187,8 +214,7 @@
         if (isLocked) return;
         isLocked = true;
         const q = currentPool[currentIdx];
-        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrongs')) || [];
-        
+        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrongs_fixed')) || [];
         const btns = document.querySelectorAll('.option-btn');
         btns.forEach(b => b.classList.add('disabled'));
 
@@ -201,17 +227,19 @@
             btns[q.ans].classList.add('correct');
             if (!wrongIds.includes(q.id)) wrongIds.push(q.id);
         }
-        localStorage.setItem('hakka_wrongs', JSON.stringify(wrongIds));
+        localStorage.setItem('hakka_wrongs_fixed', JSON.stringify(wrongIds));
         setTimeout(() => { currentIdx++; render(); }, 1200);
     }
 
     function showEnd() {
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
-        document.getElementById('score-text').innerText = `${score} / ${currentPool.length}`;
+        document.getElementById('score-text').innerText = `${score} / 15`;
+        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrongs_fixed')) || [];
+        document.getElementById('status-msg').innerHTML = wrongIds.length > 0 ? `還有 ${wrongIds.length} 題要加油！` : "🏆 完美精通！";
     }
 
-    initGame();
+    start();
 </script>
 </body>
 </html>
