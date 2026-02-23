@@ -2,138 +2,188 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>新竹旅遊冒險：客語探險家大挑戰</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客語閱讀挑戰賽 - 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 這裡保留你原本華麗的 CSS 樣式 ... (篇幅原因略過，請延用原本的 CSS) */
-        :root { --pk-yellow: #FFCB05; --pk-blue: #2A75BB; --pk-red: #EE1515; --pk-green: #4caf50; }
-        body { font-family: 'Microsoft JhengHei', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; padding: 20px; min-height: 100vh; }
-        #game-box { max-width: 600px; margin: auto; background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; position: relative; }
-        #login-screen, #battle-screen { padding: 40px; text-align: center; }
-        .comic-input { width: 80%; padding: 12px; margin: 10px; border: 2px solid #ddd; border-radius: 10px; }
-        .start-btn { background: var(--pk-red); color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .opt-btn { width: 100%; padding: 15px; margin: 5px 0; border: none; background: #ffd89b; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .opt-btn:hover { background: #ffcc6f; transform: translateY(-2px); }
-        .hp-bar { width: 100%; height: 10px; background: #eee; border-radius: 5px; margin-top: 5px; }
-        .hp-fill { height: 100%; background: var(--pk-green); width: 100%; transition: 0.5s; }
-        /* 動畫 */
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
-        .shake { animation: shake 0.2s ease-in-out 3; }
+        :root {
+            --primary: #ffb7c5; /* 櫻花粉 */
+            --correct: #4caf50; /* 答對綠 */
+            --wrong: #f44336;   /* 答錯紅 */
+        }
+
+        body, html {
+            height: 100%; margin: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)), 
+                        url('https://images.unsplash.com/photo-1522383225653-ed111181a951?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        .quiz-container {
+            width: 90%; max-width: 650px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border: 2px solid white; text-align: center;
+            transition: transform 0.2s;
+        }
+
+        h1 { color: #d63384; font-size: 1.6rem; margin: 0 0 15px 0; }
+
+        .progress-bar {
+            width: 100%; background: #eee; height: 10px;
+            border-radius: 10px; margin-bottom: 20px; overflow: hidden;
+        }
+
+        #progress-inner {
+            height: 100%; background: linear-gradient(90deg, #ffb7c5, #d63384);
+            width: 0%; transition: width 0.4s ease;
+        }
+
+        #question-text {
+            font-size: 1.3rem; min-height: 70px; margin-bottom: 20px;
+            color: #333; line-height: 1.5; font-weight: 700;
+        }
+
+        .options-grid {
+            display: grid; grid-template-columns: 1fr; gap: 10px;
+        }
+
+        @media (min-width: 500px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .option-btn {
+            background: white; border: 2px solid var(--primary);
+            padding: 12px; border-radius: 12px; font-size: 1.05rem;
+            cursor: pointer; transition: all 0.2s; color: #444;
+        }
+
+        /* 答對與答錯的樣式 */
+        .correct { background-color: var(--correct) !important; color: white !important; border-color: #2e7d32 !important; }
+        .wrong { background-color: var(--wrong) !important; color: white !important; border-color: #c62828 !important; }
+        .disabled { pointer-events: none; opacity: 0.8; }
+
+        /* 答錯震動動畫 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .shake { animation: shake 0.3s ease-in-out 2; }
+
+        #result-screen { display: none; }
+        .score-val { font-size: 2.5rem; color: #d63384; font-weight: bold; margin: 10px 0; }
+        
+        button.retry-btn {
+            margin-top: 15px; background: #4a90e2; color: white;
+            border: none; padding: 10px 25px; border-radius: 50px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-<div id="game-box">
-    <div id="login-screen">
-        <h1>新竹旅遊探險家 🎫</h1>
-        <input type="text" id="stu-class" class="comic-input" placeholder="遊客隊伍">
-        <input type="text" id="stu-name" class="comic-input" placeholder="遊客名字">
-        <button class="start-btn" onclick="startGame()">🚀 載入資料並開始！</button>
+<div class="quiz-container" id="main-box">
+    <div id="game-screen">
+        <h1>🌸 客語閱讀挑戰賽 🌸</h1>
+        <div class="progress-bar">
+            <div id="progress-inner"></div>
+        </div>
+        <div id="question-text">載入題目中...</div>
+        <div id="options" class="options-grid"></div>
     </div>
 
-    <div id="battle-screen" style="display:none;">
-        <div class="score-display">
-            <div>⭐ 積分: <span id="score-value">0</span></div>
-            <div>🏅 等級: <span id="level-value">LV.1</span></div>
-            <div class="progress-bar" style="height:5px; background:#ccc; margin:10px 0;">
-                <div id="progress-fill" style="height:100%; background:var(--pk-blue); width:0%;"></div>
-            </div>
-        </div>
-        
-        <div style="display:flex; justify-content: space-around; padding: 20px;">
-            <div id="enemy-area"><div id="enemy-monster" style="font-size:60px;">👾</div><div class="hp-bar"><div id="enemy-hp" class="hp-fill"></div></div></div>
-            <div id="player-area"><div id="my-monster" style="font-size:60px;">🔥</div><div class="hp-bar"><div id="my-hp" class="hp-fill"></div></div></div>
-        </div>
-
-        <div id="question-box" class="dialogue-box" style="background:#f9f9f9; padding:20px; border-radius:10px; font-weight:bold; margin-bottom:20px;"></div>
-        <div id="options"></div>
-        <div id="battle-msg" style="height:30px; margin-top:10px; font-weight:bold;"></div>
+    <div id="result-screen">
+        <h2>測驗完成！</h2>
+        <div class="score-val" id="score-text">0</div>
+        <p>做得真慶！(表現得很好！)</p>
+        <button class="retry-btn" onclick="location.reload()">重新挑戰</button>
     </div>
 </div>
 
 <script>
-    let allQuestions = [];
-    let gameQuestions = [];
+    let questions = [];
     let currentIdx = 0;
     let score = 0;
-    let playerHP = 100;
+    let isLocked = false;
 
-    // 使用 Fetch 讀取 JSON
-    async function loadData() {
+    async function start() {
         try {
-            const response = await fetch('questions.json');
-            if (!response.ok) throw new Error('找不到題庫檔案');
-            allQuestions = await response.json();
-            return true;
-        } catch (err) {
-            alert('錯誤: ' + err.message + '\n請確保 questions.json 放在同一個資料夾，且使用伺服器環境開啟。');
-            return false;
+            const resp = await fetch('questions.json');
+            if (!resp.ok) throw new Error();
+            const data = await resp.json();
+            // 隨機選 15 題
+            questions = data.sort(() => Math.random() - 0.5).slice(0, 15);
+            render();
+        } catch (e) {
+            document.getElementById('question-text').innerText = "❌ 無法讀取題庫 (需透過 Server 開啟)";
         }
     }
 
-    async function startGame() {
-        const loaded = await loadData();
-        if (!loaded) return;
-
-        const name = document.getElementById('stu-name').value;
-        const team = document.getElementById('stu-class').value;
-        if(!name || !team) return alert("請輸入隊伍與名字");
-
-        // 隨機抽 20 題
-        gameQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 20);
-        
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('battle-screen').style.display = 'block';
-        showQuestion();
-    }
-
-    function showQuestion() {
-        if (currentIdx >= gameQuestions.length) {
-            alert("探險完成！總分：" + score);
-            location.reload();
+    function render() {
+        if (currentIdx >= questions.length) {
+            showEnd();
             return;
         }
 
-        const qData = gameQuestions[currentIdx];
-        document.getElementById('question-box').innerText = `第 ${currentIdx+1} 題：${qData.q}`;
-        document.getElementById('progress-fill').style.width = `${(currentIdx/20)*100}%`;
-        
-        const optArea = document.getElementById('options');
-        optArea.innerHTML = '';
-        
-        qData.a.forEach((text, i) => {
+        isLocked = false;
+        const q = questions[currentIdx];
+        const box = document.getElementById('main-box');
+        box.classList.remove('shake');
+
+        document.getElementById('question-text').innerText = `${currentIdx + 1}. ${q.q}`;
+        document.getElementById('progress-inner').style.width = (currentIdx / questions.length * 100) + "%";
+
+        const optDiv = document.getElementById('options');
+        optDiv.innerHTML = "";
+
+        q.a.forEach((txt, i) => {
             const btn = document.createElement('button');
-            btn.className = 'opt-btn';
-            btn.innerText = text;
-            btn.onclick = () => checkAns(i, qData.ans);
-            optArea.appendChild(btn);
+            btn.className = 'option-btn';
+            btn.innerText = txt;
+            btn.onclick = () => check(i, btn);
+            optDiv.appendChild(btn);
         });
     }
 
-    function checkAns(selected, correct) {
-        const msg = document.getElementById('battle-msg');
-        if (selected === correct) {
-            score += 100;
-            msg.innerText = "✨ 答對了！發動攻擊！";
-            msg.style.color = "green";
-            document.getElementById('enemy-monster').classList.add('shake');
+    function check(picked, btn) {
+        if (isLocked) return;
+        isLocked = true;
+
+        const correct = questions[currentIdx].ans;
+        const allBtns = document.querySelectorAll('.option-btn');
+        const box = document.getElementById('main-box');
+
+        allBtns.forEach(b => b.classList.add('disabled'));
+
+        if (picked === correct) {
+            score++;
+            btn.classList.add('correct');
         } else {
-            playerHP -= 10;
-            msg.innerText = "❌ 答錯了！受到反擊！";
-            msg.style.color = "red";
-            document.getElementById('my-monster').classList.add('shake');
+            btn.classList.add('wrong');
+            allBtns[correct].classList.add('correct');
+            box.classList.add('shake');
         }
 
-        document.getElementById('score-value').innerText = score;
-        document.getElementById('my-hp').style.width = playerHP + "%";
-
         setTimeout(() => {
-            document.getElementById('enemy-monster').classList.remove('shake');
-            document.getElementById('my-monster').classList.remove('shake');
-            msg.innerText = "";
             currentIdx++;
-            showQuestion();
-        }, 1000);
+            render();
+        }, 1200);
     }
+
+    function showEnd() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
+        document.getElementById('progress-inner').style.width = "100%";
+    }
+
+    start();
 </script>
+
 </body>
 </html>
