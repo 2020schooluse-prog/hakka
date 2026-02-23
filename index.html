@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客語閱讀挑戰賽 - 🌸</title>
+    <title>客語地圖大闖關 - 🌸</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,153 +13,113 @@
             --bg-overlay: rgba(255, 255, 255, 0.92);
         }
 
-        /* 穩定背景設定 */
         body, html {
-            height: 100vh;
-            margin: 0;
+            height: 100vh; margin: 0;
             font-family: 'Noto Sans TC', sans-serif;
-            background: #fff5f7 url('https://pic.616pic.com/bg_w1180/00/04/61/U02K5E5Yv8.jpg!/fw/1120') no-repeat center center fixed;
+            background: #fff5f7 url('https://images.unsplash.com/photo-1522383225653-ed111181a951?auto=format&fit=crop&q=80&w=2000') no-repeat center center fixed;
             background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             overflow: hidden;
         }
 
+        /* 闖關地圖區域 */
+        .map-progress-container {
+            width: 90%; max-width: 1000px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px; padding: 15px; margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .map-line {
+            position: absolute; top: 50%; left: 5%; right: 5%;
+            height: 6px; background: #ddd; z-index: 1; transform: translateY(-50%);
+        }
+
+        .city-node {
+            width: 50px; height: 50px; background: white; border: 4px solid var(--primary);
+            border-radius: 50%; z-index: 2; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: #d63384; font-weight: bold; transition: 0.3s;
+        }
+
+        .city-node.active { background: #d63384; color: white; transform: scale(1.3); box-shadow: 0 0 15px var(--primary); }
+
+        /* 題目主容器 */
         .quiz-container {
-            width: 95%;
-            max-width: 900px; /* 增加寬度以容納大字體 */
-            background: var(--bg-overlay);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            border: 4px solid white;
-            text-align: center;
+            width: 90%; max-width: 1100px;
+            background: var(--bg-overlay); backdrop-filter: blur(12px);
+            padding: 40px; border-radius: 40px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.25);
+            border: 5px solid white; text-align: center;
         }
 
-        h1 {
-            color: #d63384;
-            font-size: 2.8rem; /* 特大標題 */
-            margin: 0 0 20px 0;
-            letter-spacing: 5px;
-        }
-
-        .progress-bar {
-            width: 100%; background: #e0e0e0; height: 20px;
-            border-radius: 30px; margin-bottom: 30px; overflow: hidden;
-        }
-
-        #progress-inner {
-            height: 100%;
-            background: linear-gradient(90deg, #ffb7c5, #d63384);
-            width: 0%;
-            transition: width 0.6s ease-in-out;
-        }
+        h1 { color: #d63384; font-size: 2.5rem; margin: 0 0 15px 0; }
 
         #question-text {
-            font-size: 2.5rem; /* 題目字體特大 */
-            min-height: 140px;
-            margin-bottom: 40px;
-            color: #111;
-            line-height: 1.5;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 20px;
+            font-size: 3.2rem; /* 極大字體 */
+            min-height: 200px; margin-bottom: 40px;
+            color: #111; line-height: 1.4; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px; /* 增加選項之間的間距，防止黏在一起 */
+            display: grid; grid-template-columns: 1fr; gap: 35px; /* 拉開間距防止黏連 */
         }
 
-        @media (min-width: 700px) {
-            .options-grid { grid-template-columns: 1fr 1fr; }
+        @media (min-width: 850px) {
+            .options-grid { grid-template-columns: 1fr 1fr; gap: 45px; }
         }
 
         .option-btn {
-            background: white;
-            border: 5px solid var(--primary);
-            padding: 30px 20px; /* 增加內距，讓按鈕看起來更大 */
-            border-radius: 25px;
-            font-size: 1.8rem; /* 選項字體加大 */
-            font-weight: 700;
-            cursor: pointer;
+            background: white; border: 6px solid var(--primary);
+            padding: 40px 25px; border-radius: 35px;
+            font-size: 2.4rem; /* 選項字體極大 */
+            font-weight: 700; cursor: pointer;
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #333;
-            box-shadow: 0 8px 0px var(--primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: #333; box-shadow: 0 10px 0px var(--primary);
+            display: flex; justify-content: center; align-items: center;
         }
 
-        .option-btn:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 20px rgba(214, 51, 132, 0.2);
-            background-color: #fff9fa;
-        }
+        .option-btn:hover { transform: translateY(-8px); box-shadow: 0 15px 25px rgba(214,51,132,0.2); }
 
-        .option-btn:active {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 0px var(--primary);
-        }
-
-        /* 答對與答錯樣式 */
-        .correct { 
-            background-color: var(--correct) !important; 
-            color: white !important; 
-            border-color: #2e7d32 !important; 
-            box-shadow: 0 8px 0px #2e7d32 !important;
-            transform: scale(1.05); 
-        }
-        .wrong { 
-            background-color: var(--wrong) !important; 
-            color: white !important; 
-            border-color: #b71c1c !important; 
-            box-shadow: 0 8px 0px #b71c1c !important;
-        }
-        .disabled { pointer-events: none; }
-
-        /* 震動動畫 */
+        .correct { background-color: var(--correct) !important; color: white !important; border-color: #2e7d32 !important; box-shadow: 0 10px 0px #2e7d32 !important; }
+        .wrong { background-color: var(--wrong) !important; color: white !important; border-color: #b71c1c !important; box-shadow: 0 10px 0px #b71c1c !important; }
+        
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-15px); }
-            40%, 80% { transform: translateX(15px); }
+            20%, 60% { transform: translateX(-20px); }
+            40%, 80% { transform: translateX(20px); }
         }
         .shake { animation: shake 0.4s ease-in-out; }
 
         #result-screen { display: none; }
-        .score-val { font-size: 6rem; color: #d63384; font-weight: bold; margin: 20px 0; }
-        .final-msg { font-size: 2.2rem; color: #444; margin-bottom: 40px; }
-        
-        .retry-btn {
-            background: #d63384; color: white; font-size: 2rem; font-weight: 700;
-            border: none; padding: 25px 60px; border-radius: 100px; 
-            cursor: pointer; transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(214, 51, 132, 0.3);
-        }
+        .score-val { font-size: 8rem; color: #d63384; font-weight: bold; }
     </style>
 </head>
 <body>
 
+<div class="map-progress-container" id="map-bar">
+    <div class="map-line"></div>
+    <div class="city-node active" data-step="0">屏東</div>
+    <div class="city-node" data-step="3">高雄</div>
+    <div class="city-node" data-step="6">嘉義</div>
+    <div class="city-node" data-step="9">台中</div>
+    <div class="city-node" data-step="12">新竹</div>
+    <div class="city-node" data-step="15">台北</div>
+</div>
+
 <div class="quiz-container" id="main-box">
     <div id="game-screen">
-        <h1>🌸 客語閱讀挑戰賽 🌸</h1>
-        <div class="progress-bar">
-            <div id="progress-inner"></div>
-        </div>
-        <div id="question-text">載入題目中...</div>
+        <h1 id="current-location">📍 當前位置：屏東站</h1>
+        <div id="question-text">準備出發...</div>
         <div id="options" class="options-grid"></div>
     </div>
 
     <div id="result-screen">
-        <h2>測驗完成！</h2>
+        <h2>🎉 恭喜完成全台大闖關！</h2>
         <div class="score-val" id="score-text">0</div>
-        <p class="final-msg">做得真慶！(表現得很好！)</p>
-        <button class="retry-btn" onclick="location.reload()">重新挑戰</button>
+        <p style="font-size:2rem;">做得真慶！你是一流的客語探險家！</p>
+        <button onclick="location.reload()" style="font-size:2.5rem; padding:20px 60px; border-radius:100px; background:#d63384; color:white; border:none; cursor:pointer; margin-top:30px;">重新挑戰</button>
     </div>
 </div>
 
@@ -168,16 +128,17 @@
     let currentIdx = 0;
     let score = 0;
     let isLocked = false;
+    const cities = ["屏東", "屏東", "屏東", "高雄", "高雄", "高雄", "嘉義", "嘉義", "嘉義", "台中", "台中", "台中", "新竹", "新竹", "新竹", "台北"];
 
     async function start() {
         try {
             const resp = await fetch('questions.json');
             const data = await resp.json();
-            // 隨機選 15 題
+            // 隨機抽 15 題，模擬 15 個里程點
             questions = data.sort(() => Math.random() - 0.5).slice(0, 15);
             render();
         } catch (e) {
-            document.getElementById('question-text').innerHTML = "❌ 讀取失敗<br><small>請確認 questions.json 格式正確</small>";
+            document.getElementById('question-text').innerText = "❌ 無法讀取題庫";
         }
     }
 
@@ -189,11 +150,13 @@
 
         isLocked = false;
         const q = questions[currentIdx];
-        const box = document.getElementById('main-box');
-        box.classList.remove('shake');
+        document.getElementById('main-box').classList.remove('shake');
+        
+        // 更新地圖節點視覺
+        updateMap();
 
         document.getElementById('question-text').innerText = q.q;
-        document.getElementById('progress-inner').style.width = (currentIdx / questions.length * 100) + "%";
+        document.getElementById('current-location').innerText = `📍 當前位置：${cities[currentIdx]}站 (${currentIdx + 1}/15)`;
 
         const optDiv = document.getElementById('options');
         optDiv.innerHTML = "";
@@ -207,15 +170,21 @@
         });
     }
 
+    function updateMap() {
+        const nodes = document.querySelectorAll('.city-node');
+        nodes.forEach(node => {
+            if (parseInt(node.dataset.step) <= currentIdx) {
+                node.classList.add('active');
+            }
+        });
+    }
+
     function check(picked, btn) {
         if (isLocked) return;
         isLocked = true;
 
         const correct = questions[currentIdx].ans;
         const allBtns = document.querySelectorAll('.option-btn');
-        const box = document.getElementById('main-box');
-
-        allBtns.forEach(b => b.classList.add('disabled'));
 
         if (picked === correct) {
             score++;
@@ -223,20 +192,20 @@
         } else {
             btn.classList.add('wrong');
             allBtns[correct].classList.add('correct');
-            box.classList.add('shake');
+            document.getElementById('main-box').classList.add('shake');
         }
 
         setTimeout(() => {
             currentIdx++;
             render();
-        }, 1300);
+        }, 1400);
     }
 
     function showEnd() {
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
-        document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
-        document.getElementById('progress-inner').style.width = "100%";
+        document.getElementById('score-text').innerText = `${score} / 15`;
+        document.querySelector('.city-node[data-step="15"]').classList.add('active');
     }
 
     start();
