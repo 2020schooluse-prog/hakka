@@ -4,101 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>客語閱讀挑戰賽 - 🌸</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #ffb7c5;
             --correct: #4caf50;
             --wrong: #f44336;
-            --bg-overlay: rgba(255, 255, 255, 0.9);
+            --bg-overlay: rgba(255, 255, 255, 0.92);
         }
 
-        /* 修正背景圖設定 */
+        /* 穩定背景設定 */
         body, html {
-            height: 100vh; 
+            height: 100vh;
             margin: 0;
             font-family: 'Noto Sans TC', sans-serif;
-            /* 備用漸層背景 + 穩定圖片連結 */
-            background: linear-gradient(135deg, #fff5f7 0%, #ffdee5 100%),
-                        url('https://images.unsplash.com/photo-1522383225653-ed111181a951?auto=format&fit=crop&q=80&w=2000') no-repeat center center fixed;
+            background: #fff5f7 url('https://pic.616pic.com/bg_w1180/00/04/61/U02K5E5Yv8.jpg!/fw/1120') no-repeat center center fixed;
             background-size: cover;
-            display: flex; 
-            justify-content: center; 
+            display: flex;
+            justify-content: center;
             align-items: center;
             overflow: hidden;
         }
 
         .quiz-container {
-            width: 95%; 
-            max-width: 850px;
+            width: 95%;
+            max-width: 900px; /* 增加寬度以容納大字體 */
             background: var(--bg-overlay);
-            backdrop-filter: blur(15px);
-            padding: 50px 40px; 
+            backdrop-filter: blur(10px);
+            padding: 40px;
             border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            border: 3px solid white; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            border: 4px solid white;
             text-align: center;
-            transition: all 0.3s ease;
         }
 
-        h1 { 
-            color: #d63384; 
-            font-size: 2.5rem; 
-            margin: 0 0 25px 0; 
-            letter-spacing: 3px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        h1 {
+            color: #d63384;
+            font-size: 2.8rem; /* 特大標題 */
+            margin: 0 0 20px 0;
+            letter-spacing: 5px;
         }
 
         .progress-bar {
-            width: 100%; background: #e8e8e8; height: 16px;
-            border-radius: 25px; margin-bottom: 35px; overflow: hidden;
+            width: 100%; background: #e0e0e0; height: 20px;
+            border-radius: 30px; margin-bottom: 30px; overflow: hidden;
         }
 
         #progress-inner {
-            height: 100%; 
+            height: 100%;
             background: linear-gradient(90deg, #ffb7c5, #d63384);
-            width: 0%; 
-            transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            width: 0%;
+            transition: width 0.6s ease-in-out;
         }
 
         #question-text {
-            font-size: 2rem; /* 特大字體 */
-            min-height: 120px; 
+            font-size: 2.5rem; /* 題目字體特大 */
+            min-height: 140px;
             margin-bottom: 40px;
-            color: #1a1a1a; 
-            line-height: 1.6; 
+            color: #111;
+            line-height: 1.5;
             font-weight: 700;
-            display: flex; 
-            align-items: center; 
+            display: flex;
+            align-items: center;
             justify-content: center;
+            padding: 0 20px;
         }
 
         .options-grid {
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px; /* 增加選項之間的間距，防止黏在一起 */
         }
 
-        @media (min-width: 600px) {
+        @media (min-width: 700px) {
             .options-grid { grid-template-columns: 1fr 1fr; }
         }
 
         .option-btn {
-            background: white; 
-            border: 4px solid var(--primary);
-            padding: 25px 20px; 
-            border-radius: 20px; 
-            font-size: 1.6rem; /* 選項字體加大 */
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            background: white;
+            border: 5px solid var(--primary);
+            padding: 30px 20px; /* 增加內距，讓按鈕看起來更大 */
+            border-radius: 25px;
+            font-size: 1.8rem; /* 選項字體加大 */
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #333;
-            box-shadow: 0 6px 0px var(--primary); /* 增加一點立體感 */
+            box-shadow: 0 8px 0px var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .option-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(214, 51, 132, 0.2);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 20px rgba(214, 51, 132, 0.2);
             background-color: #fff9fa;
         }
 
@@ -112,37 +112,35 @@
             background-color: var(--correct) !important; 
             color: white !important; 
             border-color: #2e7d32 !important; 
-            box-shadow: 0 6px 0px #2e7d32 !important;
+            box-shadow: 0 8px 0px #2e7d32 !important;
             transform: scale(1.05); 
         }
         .wrong { 
             background-color: var(--wrong) !important; 
             color: white !important; 
             border-color: #b71c1c !important; 
-            box-shadow: 0 6px 0px #b71c1c !important;
+            box-shadow: 0 8px 0px #b71c1c !important;
         }
         .disabled { pointer-events: none; }
 
+        /* 震動動畫 */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-12px); }
-            40% { transform: translateX(12px); }
-            60% { transform: translateX(-12px); }
-            80% { transform: translateX(12px); }
+            20%, 60% { transform: translateX(-15px); }
+            40%, 80% { transform: translateX(15px); }
         }
         .shake { animation: shake 0.4s ease-in-out; }
 
         #result-screen { display: none; }
-        .score-val { font-size: 5rem; color: #d63384; font-weight: bold; margin: 20px 0; }
-        .final-msg { font-size: 1.8rem; color: #444; margin-bottom: 40px; }
+        .score-val { font-size: 6rem; color: #d63384; font-weight: bold; margin: 20px 0; }
+        .final-msg { font-size: 2.2rem; color: #444; margin-bottom: 40px; }
         
         .retry-btn {
-            background: #d63384; color: white; font-size: 1.6rem; font-weight: 700;
-            border: none; padding: 20px 50px; border-radius: 60px; 
+            background: #d63384; color: white; font-size: 2rem; font-weight: 700;
+            border: none; padding: 25px 60px; border-radius: 100px; 
             cursor: pointer; transition: 0.3s;
-            box-shadow: 0 8px 15px rgba(214, 51, 132, 0.3);
+            box-shadow: 0 10px 20px rgba(214, 51, 132, 0.3);
         }
-        .retry-btn:hover { background: #c2185b; transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -179,7 +177,7 @@
             questions = data.sort(() => Math.random() - 0.5).slice(0, 15);
             render();
         } catch (e) {
-            document.getElementById('question-text').innerHTML = "❌ 無法載入題庫<br><small>請確認 questions.json 格式正確且使用伺服器開啟</small>";
+            document.getElementById('question-text').innerHTML = "❌ 讀取失敗<br><small>請確認 questions.json 格式正確</small>";
         }
     }
 
@@ -231,7 +229,7 @@
         setTimeout(() => {
             currentIdx++;
             render();
-        }, 1200);
+        }, 1300);
     }
 
     function showEnd() {
