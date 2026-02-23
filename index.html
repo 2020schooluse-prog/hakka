@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客語地圖大闖關 - 🌸 錯題強化版</title>
+    <title>客語地圖大闖關 - 修正版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -53,14 +53,14 @@
             border: 4px solid white; text-align: center;
         }
 
-        h1 { color: #d63384; font-size: 2.2rem; margin: 0; }
-        .mode-tag { color: #888; font-size: 1.1rem; margin-bottom: 15px; font-weight: bold; }
+        h1 { color: #d63384; font-size: 2.2rem; margin: 0 0 5px 0; }
+        .mode-tag { color: #888; font-size: 1.1rem; margin-bottom: 15px; }
 
         /* 題目框：貼合文字 */
-        #question-text-wrap { margin-bottom: 30px; }
         #question-text {
             display: inline-block;
-            font-size: 2.8rem; 
+            font-size: 2.5rem; 
+            margin-bottom: 25px;
             padding: 10px 25px;
             background: rgba(214, 51, 132, 0.05);
             border-radius: 20px;
@@ -81,7 +81,7 @@
             background: white; border: 4px solid var(--primary);
             padding: 15px 20px;
             border-radius: 20px;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700; cursor: pointer;
             transition: all 0.2s ease;
             color: #333; box-shadow: 0 6px 0px var(--primary);
@@ -93,23 +93,8 @@
         .wrong { background-color: var(--wrong) !important; color: white !important; border-color: #b71c1c !important; box-shadow: 0 6px 0px #b71c1c !important; }
         .disabled { pointer-events: none; }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
-        .shake { animation: shake 0.4s ease-in-out; }
-
         #result-screen { display: none; }
-        .score-val { font-size: 6rem; color: #d63384; font-weight: bold; margin: 10px 0; }
-        .status-msg { font-size: 1.8rem; color: #444; margin-bottom: 20px; }
-        
-        .next-tour-btn {
-            font-size: 2.2rem; padding: 20px 60px; border-radius: 100px; 
-            background: #d63384; color: white; border: none; cursor: pointer;
-            box-shadow: 0 8px 15px rgba(214, 51, 132, 0.3); transition: 0.3s;
-        }
-        .next-tour-btn:hover { transform: scale(1.1); background: #c2185b; }
+        .score-val { font-size: 5rem; color: #d63384; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -127,56 +112,49 @@
 <div class="quiz-container" id="main-box">
     <div id="game-screen">
         <h1>🌸 客語地圖大闖關 🌸</h1>
-        <div class="mode-tag" id="mode-info">正在準備行囊...</div>
-        <div id="question-text-wrap"><div id="question-text">載入中...</div></div>
+        <div class="mode-tag" id="mode-info">載入中...</div>
+        <div><div id="question-text">載入中...</div></div>
         <div id="options" class="options-grid"></div>
     </div>
 
     <div id="result-screen">
-        <h2 id="result-title">🎉 到達台北站！</h2>
+        <h2>🎉 闖關成功！</h2>
         <div class="score-val" id="score-text">0</div>
-        <div class="status-msg" id="status-msg"></div>
-        <button class="next-tour-btn" onclick="location.reload()">繼續下一輪挑戰</button>
+        <p id="status-msg" style="font-size:1.4rem;"></p>
+        <button onclick="location.reload()" style="font-size:1.8rem; padding:12px 40px; border-radius:50px; background:#d63384; color:white; border:none; cursor:pointer;">繼續挑戰</button>
     </div>
 </div>
 
 <script>
-    let allQuestions = [];
+    // 直接將題庫嵌入，避免外部 JSON 載入失敗的問題
+    const allQuestions = [
+        {q: "壞蹄咧！糖仔分老弟食_____咧！", a: ["淨淨", "淨俐", "清清"], ans: 0},
+        {q: "該兩兄弟當像＿＿＿，逐擺見面就相吵仔。", a: ["生份人", "自家人", "冤仇人"], ans: 2},
+        {q: "泡牛乳分嬰兒仔食，愛用_____來泡，正較衛生。", a: ["冷水", "滾水", "涼水"], ans: 1}
+        // ... 此處可加入更多題目
+    ];
+
     let currentPool = [];
     let currentIdx = 0;
     let score = 0;
     let isLocked = false;
 
-    async function start() {
-        try {
-            const resp = await fetch('questions.json');
-            allQuestions = await resp.json();
-            // 為題庫編號
-            allQuestions.forEach((q, index) => q.id = index);
-
-            // 讀取錯題庫
-            let wrongIds = JSON.parse(localStorage.getItem('hakka_wrong_v3')) || [];
-            
-            let selected = [];
-            // 1. 優先塞入錯題
-            let wrongQuestions = allQuestions.filter(q => wrongIds.includes(q.id));
-            selected = wrongQuestions.sort(() => Math.random() - 0.5).slice(0, 15);
-            
-            // 2. 用新題補足到 15 題
-            if (selected.length < 15) {
-                let otherQuestions = allQuestions.filter(q => !wrongIds.includes(q.id));
-                let needed = 15 - selected.length;
-                selected = selected.concat(otherQuestions.sort(() => Math.random() - 0.5).slice(0, needed));
-            }
-            
-            currentPool = selected;
-            document.getElementById('mode-info').innerText = 
-                wrongIds.length > 0 ? `🚀 本輪包含 ${Math.min(wrongIds.length, 15)} 題需要加強的內容` : "🆕 全新隨機挑戰，出發！";
-            
-            render();
-        } catch (e) {
-            document.getElementById('question-text').innerText = "❌ 無法讀取題庫檔案";
+    function initGame() {
+        // 為題目增加 ID
+        allQuestions.forEach((q, i) => q.id = i);
+        
+        // 取得錯題
+        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrongs')) || [];
+        let selected = allQuestions.filter(q => wrongIds.includes(q.id)).sort(() => 0.5 - Math.random()).slice(0, 15);
+        
+        if (selected.length < 15) {
+            let others = allQuestions.filter(q => !wrongIds.includes(q.id)).sort(() => 0.5 - Math.random());
+            selected = selected.concat(others.slice(0, 15 - selected.length));
         }
+        
+        currentPool = selected;
+        document.getElementById('mode-info').innerText = wrongIds.length > 0 ? `💪 優先練習 ${Math.min(wrongIds.length, 15)} 題錯題` : "🆕 全新隨機挑戰";
+        render();
     }
 
     function render() {
@@ -184,16 +162,12 @@
             showEnd();
             return;
         }
-
         isLocked = false;
         const q = currentPool[currentIdx];
-        document.getElementById('main-box').classList.remove('shake');
         updateMap();
-
         document.getElementById('question-text').innerText = q.q;
         const optDiv = document.getElementById('options');
         optDiv.innerHTML = "";
-
         q.a.forEach((txt, i) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
@@ -204,62 +178,40 @@
     }
 
     function updateMap() {
-        const nodes = document.querySelectorAll('.city-node');
-        nodes.forEach(node => {
+        document.querySelectorAll('.city-node').forEach(node => {
             if (parseInt(node.dataset.step) <= currentIdx) node.classList.add('active');
-            else node.classList.remove('active');
         });
     }
 
     function check(picked, btn) {
         if (isLocked) return;
         isLocked = true;
-
         const q = currentPool[currentIdx];
-        const correct = q.ans;
-        const allBtns = document.querySelectorAll('.option-btn');
-        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrong_v3')) || [];
+        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrongs')) || [];
+        
+        const btns = document.querySelectorAll('.option-btn');
+        btns.forEach(b => b.classList.add('disabled'));
 
-        allBtns.forEach(b => b.classList.add('disabled'));
-
-        if (picked === correct) {
+        if (picked === q.ans) {
             score++;
             btn.classList.add('correct');
-            // 答對就從錯題庫移除
             wrongIds = wrongIds.filter(id => id !== q.id);
         } else {
             btn.classList.add('wrong');
-            allBtns[correct].classList.add('correct');
-            document.getElementById('main-box').classList.add('shake');
-            // 答錯就加入錯題庫
+            btns[q.ans].classList.add('correct');
             if (!wrongIds.includes(q.id)) wrongIds.push(q.id);
         }
-
-        localStorage.setItem('hakka_wrong_v3', JSON.stringify(wrongIds));
-
-        setTimeout(() => {
-            currentIdx++;
-            render();
-        }, 1200);
+        localStorage.setItem('hakka_wrongs', JSON.stringify(wrongIds));
+        setTimeout(() => { currentIdx++; render(); }, 1200);
     }
 
     function showEnd() {
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('score-text').innerText = `${score} / ${currentPool.length}`;
-        
-        let wrongIds = JSON.parse(localStorage.getItem('hakka_wrong_v3')) || [];
-        const msg = document.getElementById('status-msg');
-        
-        if (wrongIds.length > 0) {
-            msg.innerHTML = `做得好！目前還有 <b style="color:#d63384">${wrongIds.length}</b> 題未完全掌握。<br>下一輪會優先幫你複習！`;
-        } else {
-            msg.innerHTML = "🏆 太完美了！你已經精通目前所有挑戰！";
-        }
     }
 
-    start();
+    initGame();
 </script>
-
 </body>
 </html>
